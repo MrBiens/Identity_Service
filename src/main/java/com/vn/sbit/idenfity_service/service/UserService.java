@@ -21,7 +21,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.HashSet;
 import java.util.List;
@@ -54,7 +53,7 @@ public class UserService {
         HashSet<Role> role = new HashSet<>();
         String roleId = com.vn.sbit.idenfity_service.EnumRoles.Role.USER.toString();
 
-        roleRepository.findById(roleId).ifPresent(yes -> role.add(yes)); // bởi vì lambda method ifPresent sẽ lưu nếu nó != null
+        roleRepository.findById(roleId).ifPresent(role::add); // bởi vì lambda method ifPresent sẽ lưu nếu nó != null
         user.setRoles(role); //set role này làm mặc định khi tạo tài khoản
 
         try {
@@ -83,7 +82,7 @@ public class UserService {
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
-    public List<UserResponse> getUsers() throws Exception {
+    public List<UserResponse> getUsers()  {
         return userRepository.findAll()
                 .stream()
                 .map(userMapper::toUserResponse)

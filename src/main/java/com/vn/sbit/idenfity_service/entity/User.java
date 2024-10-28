@@ -8,7 +8,8 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor //constructor null
 @AllArgsConstructor // constructor full property
 @FieldDefaults(level = AccessLevel.PRIVATE)
