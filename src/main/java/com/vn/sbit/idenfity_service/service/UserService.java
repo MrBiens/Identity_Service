@@ -21,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.HashSet;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.List;
 @RequiredArgsConstructor   //Dependency injection constructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
+
 //@FielDefaults(level=AccessLevel.PRIVATE, makeFilnal = true) -- những attribute nào không khai báo sẽ mặc định là private final NameAttribute;
 public class UserService {
     UserRepository userRepository;
@@ -63,7 +65,7 @@ public class UserService {
     }
 
     //get info user login now
-    @PostAuthorize("returnObject.userName == authentication.name or hasRole('ROLE_ADMIN')")
+//    @PostAuthorize("returnObject.userName == authentication.name or hasRole('ROLE_ADMIN') or hasRole('MANAGER')")
     public UserResponse getByUserName() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();

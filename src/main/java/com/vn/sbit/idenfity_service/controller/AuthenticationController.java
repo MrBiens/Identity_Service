@@ -13,10 +13,8 @@ import com.vn.sbit.idenfity_service.service.AuthenticationService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 
@@ -24,6 +22,7 @@ import java.text.ParseException;
 @RequestMapping("/auth")
 @RequiredArgsConstructor // tao construct de autowired
 @FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
+@Slf4j
 public class AuthenticationController {
     AuthenticationService authenticationService;
 
@@ -31,8 +30,11 @@ public class AuthenticationController {
     @PostMapping("/token")
     public ApiResponse<AuthenticationResponse> authenticationApiResponse(@RequestBody AuthenticationRequest request){
         var result=authenticationService.Authenticate(request);
+        log.info("User name:{}",request.getUserName());
+        log.info("Pass word:{}",request.getPassWord());
 
         return ApiResponse.<AuthenticationResponse>builder()
+                .code(200)
                 .result(result)
                 .build();
     }
@@ -43,6 +45,7 @@ public class AuthenticationController {
     public ApiResponse<IntrospectResponse> introspectApiResponse(@RequestBody IntrospectRequest request) throws ParseException, JOSEException {
         var result=authenticationService.introspectResponse(request);
         return ApiResponse.<IntrospectResponse>builder()
+                .code(200)
                 .result(result)
                 .build();
 
@@ -61,6 +64,7 @@ public class AuthenticationController {
     public ApiResponse<AuthenticationResponse> refreshToken(@RequestBody RefreshTokenRequest request) throws ParseException, JOSEException {
         var result=authenticationService.RefreshToken(request);
         return ApiResponse.<AuthenticationResponse>builder()
+                .code(200)
                 .result(result)
                 .build();
     }

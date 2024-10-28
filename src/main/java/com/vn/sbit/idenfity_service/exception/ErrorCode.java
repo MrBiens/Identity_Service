@@ -14,7 +14,7 @@ public enum ErrorCode {
     USER_EXISTED(1001,"User existed",HttpStatus.BAD_REQUEST ),//400 : yêu cầu không hợp lệ
     USER_USERNAME_INVALID(1002,"Username must be at least {min} character",HttpStatus.BAD_REQUEST),
     USER_PASSWORD_INVALID(1003,"Password must be at least {min} character",HttpStatus.BAD_REQUEST),
-    USER_NOT_EXISTED(1004,"User not existed" ,HttpStatus.NOT_FOUND),//404 không tìm thấy
+    USER_NOT_EXISTED(1004,"Bo chiu" ,HttpStatus.NOT_FOUND),//404 không tìm thấy    User not existed
     INVALID_DOB(1005,"Your age must be at least {min}.",HttpStatus.BAD_REQUEST),
     UNAUTHENTICATED(2001,"Unauthenticated",HttpStatus.UNAUTHORIZED),//401 -người dùng không được xác thực -> vì sai thông tin
     UNAUTHORIZED(2002,"Unauthorized.Please check your Role",HttpStatus.FORBIDDEN), //403 từ chối - không có quyền truy cập vd user-> admin

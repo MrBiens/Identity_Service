@@ -27,6 +27,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.text.ParseException;
 import java.time.Instant;
@@ -39,6 +40,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
+
 public class AuthenticationService {
     @NonFinal // đánh dấu để lombok không inject dependency vào construct
     @Value("${jwt.signerKey}")
@@ -86,14 +88,12 @@ public class AuthenticationService {
         boolean authenticated = passwordEncoder.matches(request.getPassWord(), user.getPassWord());
         if (!authenticated) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
-        } else {
-            var token = generateToken(user);
-            return AuthenticationResponse.builder()
-                    .token(token)
-                    .authenticated(true)
-                    .build();
         }
-
+        var token = generateToken(user);
+        return AuthenticationResponse.builder()
+                .token(token)
+                .authenticated(true)
+                .build();
     }
 
     // hủy bỏ token
@@ -153,8 +153,13 @@ public class AuthenticationService {
 
         Date expiryTime = (isRefresh)
                 // lấy thời gian tạo token + thời gian hết hạn , chuyển về mili giây rồi chuyển vào đối tượng ngày mới .Mục đích là tăng thêm time để Refresh token nếu token hết hạn
-                ? (new Date(signedJWT.getJWTClaimsSet().getIssueTime().toInstant().plus(REFRESHABLE_DURATION, ChronoUnit.HOURS).toEpochMilli()))
-                : signedJWT.getJWTClaimsSet().getExpirationTime();//Lấy thời gian hết hạn của token từ claims set của JWT.
+            ? (new Date(signedJWT
+                .getJWTClaimsSet()
+                .getIssueTime()
+                .toInstant()
+                .plus(REFRESHABLE_DURATION, ChronoUnit.HOURS)
+                .toEpochMilli()))
+            : signedJWT.getJWTClaimsSet().getExpirationTime();//Lấy thời gian hết hạn của token từ claims set của JWT.
 
         // sẽ lấy token hiện tại và tạo 1 bản sao rồi truyền vào primarykey đã được mã hóa rồi so sánh với token cũ
         var verified = signedJWT.verify(verifier);//trả về true nếu token signature giống với signature được tạo để kiển tra
