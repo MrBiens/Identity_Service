@@ -85,6 +85,22 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", corsConfiguration);
         return source;
     }
+
+//    @Bean
+//    public UrlBasedCorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration corsConfiguration = new CorsConfiguration();
+//        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173"));
+//        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+//        corsConfiguration.setAllowedHeaders(List.of("authorization", "content-type", "x-auth-token"));
+//        corsConfiguration.setExposedHeaders(List.of("x-auth-token"));
+//        corsConfiguration.setAllowCredentials(true);
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", corsConfiguration);
+//        return source;
+//    }
+
+
+
 //
     @Bean // dùng cho hasAuthority - converter tu SCOPE to ""
     JwtAuthenticationConverter jwtAuthenticationConverter(){
