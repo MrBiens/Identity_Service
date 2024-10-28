@@ -43,9 +43,10 @@ public class UserService {
 
     @Transactional
     public UserResponse createUser(UserCreationRequest request) {
-        if (userRepository.existsByUserName(request.getUserName())){
-            throw new AppException(ErrorCode.USER_EXISTED);
-        }
+//        if (userRepository.existsByUserName(request.getUserName())){
+//            throw new AppException(ErrorCode.USER_EXISTED);
+//        }  // Boi vi da unique field cho nen khong can check - db da check
+
         User user = userMapper.toUser(request);
 
         user.setPassWord(passwordEncoder.encode(request.getPassWord()));
@@ -61,7 +62,7 @@ public class UserService {
         } catch (DataIntegrityViolationException exception) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
-        return userMapper.toUserResponse(userRepository.save(user));
+        return userMapper.toUserResponse(user);
     }
 
     //get info user login now
