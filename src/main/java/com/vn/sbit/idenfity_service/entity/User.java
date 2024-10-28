@@ -18,6 +18,7 @@ public class User {
      @GeneratedValue(strategy = GenerationType.UUID)
      String id;
 
+     @Column(name = "username",unique = true,columnDefinition = "VARCHAR(255) COLLATE utf8mb4_unicode_ci") //unique field - không phân biệt hoa thường (utf8mb4_bin là phân biệt)
      String userName;
 
      String passWord;
