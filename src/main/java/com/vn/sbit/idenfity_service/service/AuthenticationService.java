@@ -82,6 +82,7 @@ public class AuthenticationService {
 
     //Xác thực để trả về token
     public AuthenticationResponse Authenticate(AuthenticationRequest request) {
+        log.info("JWT_SIGNERKEY:{}",SIGNER_KEY);
         var user = userRepository.findByUserName(request.getUserName()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         //xác thực mật khẩu có khớp với mật khẩu đã lưu
