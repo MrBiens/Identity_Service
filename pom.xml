@@ -11,7 +11,7 @@
 	<groupId>com.vn.sbit</groupId>
 	<artifactId>identity-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>idenfity-service</name>
+	<name>identity-service</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>

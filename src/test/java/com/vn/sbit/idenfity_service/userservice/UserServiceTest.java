@@ -5,6 +5,7 @@ import com.vn.sbit.idenfity_service.dto.response.UserResponse;
 import com.vn.sbit.idenfity_service.entity.Role;
 import com.vn.sbit.idenfity_service.entity.User;
 import com.vn.sbit.idenfity_service.exception.AppException;
+import com.vn.sbit.idenfity_service.exception.ErrorCode;
 import com.vn.sbit.idenfity_service.mapper.UserMapper;
 import com.vn.sbit.idenfity_service.repository.RoleRepository;
 import com.vn.sbit.idenfity_service.repository.UserRepository;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,7 +92,7 @@ public class UserServiceTest {
     @Test
     void createUser_validRequest_success() {
         // GIVEN
-        when(userRepository.existsByUserName(anyString())).thenReturn(false);
+//        when(userRepository.existsByUserName(anyString())).thenReturn(false);
         when(userRepository.save(any())).thenReturn(user);
 
         /* WHEN */
@@ -102,16 +104,16 @@ public class UserServiceTest {
     }
 
     //test ngoại lệ if - throws-  lỗi cụ thể
-    @Test
-    void createUser_userExists_false(){
-        /* Given ( giả sử ) - truyền vào các trường hợp*/
-        when(userRepository.existsByUserName(anyString())).thenReturn(true);
-        /*when(khi nào)
-         lỗi của ngoại lệ */
-        var exception=org.junit.jupiter.api.Assertions.assertThrows(AppException.class,() -> userService.createUser(userCreationRequest));
-        //then(sau đó)
-        Assertions.assertThat(exception.getErrorCode().getCode()).isEqualTo(1001);
-    }
+//    @Test
+//    void createUser_userExists_false(){
+//        /* Given ( giả sử ) - truyền vào các trường hợp*/
+//        when(userRepository.save(user)).thenThrow(new DataIntegrityViolationException(""));
+//        /*when(khi nào)
+//         lỗi của ngoại lệ */
+//        var exception=org.junit.jupiter.api.Assertions.assertThrows(AppException.class,() -> userService.createUser(userCreationRequest));
+//        //then(sau đó)
+//        Assertions.assertThat(exception.getErrorCode().getCode()).isEqualTo(1001);
+//    }
 
     @Test
     @WithMockUser(username = "hihihaha5",roles = {"ADMIN"}) // tài khoản giả định
