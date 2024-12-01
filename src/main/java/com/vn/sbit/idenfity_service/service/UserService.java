@@ -101,7 +101,7 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         userMapper.updateUser(user, request);
         user.setPassWord(passwordEncoder.encode(request.getPassWord())); // class securityConfig
-        var roles = roleRepository.findAllById(request.getRoles());
+        List<Role> roles = roleRepository.findAllById(request.getRoles());
         user.setRoles(new HashSet<>(roles)); //because user_role property = SET
 
         return userMapper.toUserResponse(userRepository.save(user));
