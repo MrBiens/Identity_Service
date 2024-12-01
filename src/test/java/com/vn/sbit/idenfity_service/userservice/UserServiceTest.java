@@ -193,6 +193,14 @@ public class UserServiceTest {
 
         userRepository.save(user);
         userResponse= userMapper.toUserResponse(user);
+        //userMapper không dùng được cho nên tự build so sánh ( mà không cần thay đổi ở BeforeEach)
+                UserResponse userUpdateResponse= UserResponse.builder()
+                .id(user.getId())
+                .userName(user.getUserName())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .dob(user.getDob())
+                .build();
         // then - kiểm tra
         Assertions.assertThat(userResponse.getFirstName()).isEqualTo(updateRequest.getFirstName());
         Assertions.assertThat(userResponse.getLastName()).isEqualTo(updateRequest.getLastName());
