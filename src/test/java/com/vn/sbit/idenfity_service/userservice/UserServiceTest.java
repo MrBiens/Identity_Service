@@ -140,6 +140,7 @@ public class UserServiceTest {
     @Test
     @WithMockUser(username = "hihihaha5",roles = {"ADMIN"}) // tài khoản giả định
     void getByUserName_valid_success(){
+        //Tạo một đối tượng Optional chứa giá trị user nếu user không phải là null. Nếu user là null, nó trả về một Optional.empty.
         when(userRepository.findByUserName(anyString())).thenReturn(Optional.ofNullable(user));
 
         var response =userService.getByUserName();
@@ -152,7 +153,7 @@ public class UserServiceTest {
     @WithMockUser(username = "hihihaha5",roles = {"ADMIN"}) // tài khoản giả định
     void getByUserName_NotFound_error(){
         //kiểm tra user null
-        when(userRepository.findByUserName(anyString())).thenReturn(Optional.ofNullable(null));
+        when(userRepository.findByUserName(anyString())).thenReturn(Optional.empty());
 
         AppException exception=org.junit.jupiter.api.Assertions.assertThrows(AppException.class,() -> userService.getByUserName());
 //        org.junit.jupiter.api.Assertions.assertThrows(AppException.class,() -> userService.getByUserName());
@@ -164,6 +165,7 @@ public class UserServiceTest {
         //given - data
 
         //when
+        // Tạo một đối tượng Optional chứa giá trị user. Không cho phép giá trị user là null
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(userRepository.save(user)).thenReturn(user);
 
