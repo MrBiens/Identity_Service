@@ -3,6 +3,7 @@ package com.vn.sbit.idenfity_service.userservice;
 import com.vn.sbit.idenfity_service.dto.request.UserCreationRequest;
 import com.vn.sbit.idenfity_service.dto.request.UserUpdateRequest;
 import com.vn.sbit.idenfity_service.dto.response.UserResponse;
+import com.vn.sbit.idenfity_service.entity.Permission;
 import com.vn.sbit.idenfity_service.entity.Role;
 import com.vn.sbit.idenfity_service.entity.User;
 import com.vn.sbit.idenfity_service.exception.AppException;
@@ -62,10 +63,27 @@ public class UserServiceTest {
 
 
     private UserCreationRequest userCreationRequest;
-    private UserUpdateRequest updateRequest;
     private UserResponse userResponse;
     private User user;
     private LocalDate dob;
+    private Permission permission(){
+        return new Permission(
+                "PERMISSION_UPDATE",
+                "Update"
+
+        );
+    }
+    private Role role(){
+        return new Role(
+                "USER",
+                "ROLE USER",
+                Set.of(permission())
+        );
+    }
+
+
+
+
 
 
 
@@ -81,20 +99,13 @@ public class UserServiceTest {
                 .dob(dob)
                 .build();
 
-        updateRequest= UserUpdateRequest
-                .builder()
-                .passWord("123456789")
-                .firstName("Tran Song")
-                .lastName("Bien")
-                .dob(dob)
-                .build();
 
 
         userResponse=UserResponse
                 .builder()
                 .id("nihaoma")
                 .userName("hihihaha3")
-                .firstName("Tran Song")
+                .firstName("Tran Van")
                 .lastName("Bien")
                 .dob(dob)
                 .build();
@@ -106,8 +117,8 @@ public class UserServiceTest {
                 .firstName("Tran Song")
                 .lastName("Bien")
                 .dob(dob)
+                .roles(Set.of(role()))
                 .build();
-
 
     }
     //test method user service create user
@@ -162,22 +173,42 @@ public class UserServiceTest {
     @Test
     @WithMockUser(username = "hihihaha5", authorities = {"PERMISSION_UPDATE"})
     void test_UpdateUser_success_Simple() {
-        //given - data
+        //given ( input-output) + when - giả sử xảy ra
+        UserUpdateRequest updateRequest= UserUpdateRequest
+                .builder()
+                .passWord("12345678910")
+                .firstName("Tran Van")
+                .lastName("Bien")
+                .dob(dob)
+                .build();
 
-        //when
-        // Tạo một đối tượng Optional chứa giá trị user. Không cho phép giá trị user là null
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(userRepository.save(user)).thenReturn(user);
+        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(userMapper.toUserResponse(user)).thenReturn(userResponse);
+        // when - hành động muốn kiểm tra
+        user = userRepository.findById(user.getId()).orElseThrow();
+        user.setPassWord(updateRequest.getPassWord());
+        user.setFirstName(updateRequest.getFirstName());
+        user.setLastName(updateRequest.getLastName());
 
-        //then
-        Assertions.assertThat(userResponse.getFirstName()).isEqualTo(user.getFirstName());
+        userRepository.save(user);
+        userResponse= userMapper.toUserResponse(user);
+        // then - kiểm tra
+        Assertions.assertThat(userResponse.getFirstName()).isEqualTo(updateRequest.getFirstName());
+        Assertions.assertThat(userResponse.getLastName()).isEqualTo(updateRequest.getLastName());
+        Assertions.assertThat(userResponse.getDob()).isEqualTo(updateRequest.getDob());
+        Assertions.assertThat(userResponse.getUserName()).isEqualTo(user.getUserName());  // Kiểm tra UserName vẫn không thay đổi
+        Assertions.assertThat(userResponse.getId()).isEqualTo(user.getId());  // Kiểm tra ID vẫn không thay đổi
 
-
-
-
-
+        /*
+        * Bởi vì khi update user sẽ phải truyền vào userId của nó ở Path url mà userId chính là ở User.getId cho nên ta ngầm thừa nhận và lấy ra userId ở phần test.
+        Sau đó ta sẽ tìm user dựa trên userId đó. và nó có tên là updateUser
+        tiếp theo ta sẽ lấy từ updateRequest các giá trị thay đổi và gán nó vào updateUser đã tìm thấy dựa trên Id.Rồi ta sẽ lưu nó lại,
+        Tiếp theo ta sẽ so sánh user sau khi lưu có giống với giá trị updateRequest hay không bằng Assertions.that
+         */
 
     }
+
 
 
     /*
