@@ -44,6 +44,7 @@ public class UserController {
 
         authentication.getAuthorities().forEach(grantedAuthority  ->log.info("Authorization: {}",grantedAuthority.getAuthority()));
         return ApiResponse.<List<UserResponse>>builder()
+                .code(200)
                 .result(userService.getUsers())
                 .build();
     }

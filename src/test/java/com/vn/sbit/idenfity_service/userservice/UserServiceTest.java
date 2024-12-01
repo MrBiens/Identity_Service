@@ -1,6 +1,7 @@
 package com.vn.sbit.idenfity_service.userservice;
 
 import com.vn.sbit.idenfity_service.dto.request.UserCreationRequest;
+import com.vn.sbit.idenfity_service.dto.request.UserUpdateRequest;
 import com.vn.sbit.idenfity_service.dto.response.UserResponse;
 import com.vn.sbit.idenfity_service.entity.Role;
 import com.vn.sbit.idenfity_service.entity.User;
@@ -10,10 +11,12 @@ import com.vn.sbit.idenfity_service.mapper.UserMapper;
 import com.vn.sbit.idenfity_service.repository.RoleRepository;
 import com.vn.sbit.idenfity_service.repository.UserRepository;
 import com.vn.sbit.idenfity_service.service.UserService;
+import lombok.With;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.MatcherAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,35 +25,44 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 
 @SpringBootTest
 @TestPropertySource("/test.properties")
-
 public class UserServiceTest {
 
     private static final Logger log = LoggerFactory.getLogger(UserServiceTest.class);
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
     @MockBean
     private UserRepository userRepository;
 
+    @Mock
+    PasswordEncoder passwordEncoder;
+
+    @Mock
+    UserMapper userMapper;
 
 
     private UserCreationRequest userCreationRequest;
+    private UserUpdateRequest updateRequest;
     private UserResponse userResponse;
     private User user;
     private LocalDate dob;
@@ -69,6 +81,15 @@ public class UserServiceTest {
                 .dob(dob)
                 .build();
 
+        updateRequest= UserUpdateRequest
+                .builder()
+                .passWord("123456789")
+                .firstName("Tran Song")
+                .lastName("Bien")
+                .dob(dob)
+                .build();
+
+
         userResponse=UserResponse
                 .builder()
                 .id("nihaoma")
@@ -81,6 +102,7 @@ public class UserServiceTest {
         user=User.builder()
                 .id("nihaoma")
                 .userName("hihihaha3")
+                .passWord("123456789")
                 .firstName("Tran Song")
                 .lastName("Bien")
                 .dob(dob)
@@ -132,10 +154,30 @@ public class UserServiceTest {
         //kiểm tra user null
         when(userRepository.findByUserName(anyString())).thenReturn(Optional.ofNullable(null));
 
-        var exception=org.junit.jupiter.api.Assertions.assertThrows(AppException.class,() -> userService.getByUserName());
+        AppException exception=org.junit.jupiter.api.Assertions.assertThrows(AppException.class,() -> userService.getByUserName());
+//        org.junit.jupiter.api.Assertions.assertThrows(AppException.class,() -> userService.getByUserName());
 
         Assertions.assertThat(exception.getErrorCode().getCode()).isEqualTo(1004);
     }
+    @Test
+    @WithMockUser(username = "hihihaha5", authorities = {"PERMISSION_UPDATE"})
+    void test_UpdateUser_success_Simple() {
+        //given - data
+
+        //when
+        when(userRepository.findById(user.getId())).thenReturn(Optional.ofNullable(user));
+        when(userRepository.save(user)).thenReturn(user);
+
+        //then
+        Assertions.assertThat(userResponse.getFirstName()).isEqualTo(user.getFirstName());
+
+
+
+
+
+
+    }
+
 
     /*
         @Test
