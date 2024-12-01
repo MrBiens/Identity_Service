@@ -156,7 +156,6 @@ public class UserServiceTest {
 
         AppException exception=org.junit.jupiter.api.Assertions.assertThrows(AppException.class,() -> userService.getByUserName());
 //        org.junit.jupiter.api.Assertions.assertThrows(AppException.class,() -> userService.getByUserName());
-
         Assertions.assertThat(exception.getErrorCode().getCode()).isEqualTo(1004);
     }
     @Test
@@ -165,7 +164,7 @@ public class UserServiceTest {
         //given - data
 
         //when
-        when(userRepository.findById(user.getId())).thenReturn(Optional.ofNullable(user));
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(userRepository.save(user)).thenReturn(user);
 
         //then
